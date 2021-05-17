@@ -94,7 +94,25 @@ class MenuController extends BaseController
     ]
      */
 
-    public function getMenuItems() {
+    public function getMenuItems($response) {
         throw new \Exception('implement in coding task 3');
+
+        $arrAllTaxonomyTerms = collect($response->json()['data']);;
+        foreach ($arrDataTaxonomyTerms as $dataTaxonomyTerm) {
+            if ($dataTaxonomyTerm['parent_id'] == null) {
+                $fetchTaxonomyTermsByParentId = collect($response->json()['data'])::where(['parent_id' => $dataTaxonomyTerm['id'] ])->get()->toArray();
+                foreach ($fetchTaxonomyTermsByParentId as $taxonomyTermByParentId) {
+                    $fetchTaxonomyTermsBySubParentId = collect($response->json()['data'])::where(['parent_id' => $taxonomyTermByParentId['id'] ])->get()->toArray();
+                    if (count($fetchTaxonomyTermsBySubParentId) > 0) {
+                        foreach ($fetchTaxonomyTermsBySubParentId as $taxonomyTermsBySubParentId) {
+                            $arrAllTaxonomyTerms[$dataTaxonomyTerm['id']][$taxonomyTermByParentId['id']][$taxonomyTermsBySubParentId['id']] = $taxonomyTermsBySubParentId;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $arrAllTaxonomyTerms;
+
     }
 }
