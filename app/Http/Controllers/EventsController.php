@@ -97,10 +97,10 @@ class EventsController extends BaseController
      */
 
     public function getEventsWithWorkshops($response) {
-        throw new \Exception('implement in coding task 1');
+        //throw new \Exception('implement in coding task 1');
 
         $collection = collect($response->json()['data']);
-        $filtered = $collection->whereNotNull('workshops');
+        $filtered = $collection->whereNotNull('workshops')->get();
         return $filtered;
     }
 
@@ -179,7 +179,10 @@ class EventsController extends BaseController
     ```
      */
 
-    public function getFutureEventsWithWorkshops() {
-        throw new \Exception('implement in coding task 2');
+    public function getFutureEventsWithWorkshops($response) {
+        //throw new \Exception('implement in coding task 2');
+        $collection = collect($response->json()['data']);
+        $filtered = $collection->whereRaw("DATE(date) BETWEEN YEAR(start) AND YEAR(end) AND DATE(date) BETWEEN MONTH(start) AND MONTH(end)");
+        return $filtered;
     }
 }
